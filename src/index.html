@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/favicon.png" />
+    <title>Story App</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="/styles/styles.css" />
+  </head>
+  <body>
+    <header class="main-header-wrapper">
+      <div class="main-header container">
+        <div class="header-content">
+          <a class="brand-name" href="#/">
+            <i class="fas fa-book-open"></i>
+            <span>StoryApp</span>
+          </a>
+
+          <nav id="navigation-drawer" class="navigation-drawer">
+            <ul id="nav-list" class="nav-list">
+              <li>
+                <a href="#/" class="nav-link active"
+                  ><i class="fas fa-home"></i> <span>Beranda</span></a
+                >
+              </li>
+              <li>
+                <a href="#/addstory" class="nav-link"
+                  ><i class="fas fa-plus-circle"></i>
+                  <span>Tambah Cerita</span></a
+                >
+              </li>
+              <li>
+                <a href="#/about" class="nav-link"
+                  ><i class="fas fa-info-circle"></i> <span>Tentang</span></a
+                >
+              </li>
+              <li class="auth-links">
+                <a href="#/login" class="nav-link login-btn"
+                  ><i class="fas fa-sign-in-alt"></i> <span>Masuk</span></a
+                >
+                <a href="#/register" class="nav-link register-btn"
+                  ><i class="fas fa-user-plus"></i> <span>Daftar</span></a
+                >
+              </li>
+            </ul>
+          </nav>
+
+          <button id="drawer-button" class="drawer-button">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="sidebar-overlay"></div>
+
+    <main id="main-content" class="main-content container"></main>
+
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script type="module" src="/scripts/index.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        feather.replace();
+
+        // Highlight current page in nav
+        const currentPath = window.location.hash.split("/")[0] || "#/";
+        document.querySelectorAll(".nav-link").forEach((link) => {
+          link.classList.toggle(
+            "active",
+            link.getAttribute("href") === currentPath
+          );
+        });
+      });
+    </script>
+  </body>
+</html>
