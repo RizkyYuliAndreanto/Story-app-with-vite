@@ -394,6 +394,8 @@ body {
 /*====== Home Page Style End ======*/
 
 /*====== Story List Style Start ======*/
+
+
 .list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -1003,9 +1005,53 @@ form textarea {
 
 /* ============Abouth Page end =============== */
 
-
 /* ============AUTH START============== */
+/* Auth visibility controls */
+.auth-only {
+  display: none;
+}
 
+.guest-only {
+  display: block;
+}
+
+.authenticated .auth-only {
+  display: block;
+}
+
+.authenticated .guest-only {
+  display: none;
+}
+
+/* Logout button styles */
+.logout-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+  width: 100%;
+  text-align: left;
+}
+
+.logout-btn:hover {
+  color: #ff6b6b;
+}
+
+/* Loading spinner */
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 /* ============AUTH END============== */
 
 /* ===== DESKTOP NAVIGATION ===== */

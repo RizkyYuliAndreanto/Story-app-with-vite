@@ -1,5 +1,6 @@
-import routes from '../routes/routes';
-import { getActiveRoute } from '../routes/url-parser';
+import routes from "../routes/routes";
+import { getActiveRoute } from "../routes/url-parser";
+import { isAuthenticated } from "../utils/auth";
 
 class App {
   #content = null;
@@ -15,27 +16,29 @@ class App {
   }
 
   #setupDrawer() {
-    this.#drawerButton.addEventListener('click', () => {
-      this.#navigationDrawer.classList.toggle('open');
+    this.#drawerButton.addEventListener("click", () => {
+      this.#navigationDrawer.classList.toggle("open");
     });
 
-    document.body.addEventListener('click', (event) => {
+    document.body.addEventListener("click", (event) => {
       if (
         !this.#navigationDrawer.contains(event.target) &&
         !this.#drawerButton.contains(event.target)
       ) {
-        this.#navigationDrawer.classList.remove('open');
+        this.#navigationDrawer.classList.remove("open");
       }
 
-      this.#navigationDrawer.querySelectorAll('a').forEach((link) => {
+      this.#navigationDrawer.querySelectorAll("a").forEach((link) => {
         if (link.contains(event.target)) {
-          this.#navigationDrawer.classList.remove('open');
+          this.#navigationDrawer.classList.remove("open");
         }
       });
     });
   }
 
   async renderPage() {
+    document.body.classList.toggle("authenticated", isAuthenticated());
+
     const url = getActiveRoute();
     const page = routes[url];
 

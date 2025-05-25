@@ -1,5 +1,5 @@
 import { addStory, dataURLtoBlob } from "../../data/api";
-import { redirectIfNotAuthenticated } from "../../utils/auth.js";
+import { redirectIfNotAuthenticated, getAuthToken } from "../../utils/auth.js";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -294,7 +294,7 @@ export default class AddStory {
       .addEventListener("submit", async (e) => {
         e.preventDefault();
         try {
-          const token = localStorage.getItem("token");
+          const token = getAuthToken(); // ✅ ganti dengan auth.js
           if (!token) throw new Error("Anda harus login terlebih dahulu");
 
           const formData = new FormData();

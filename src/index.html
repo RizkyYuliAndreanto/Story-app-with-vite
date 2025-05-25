@@ -22,28 +22,41 @@
           <nav id="navigation-drawer" class="navigation-drawer">
             <ul id="nav-list" class="nav-list">
               <li>
-                <a href="#/" class="nav-link active"
+                <a href="#/" class="nav-link"
                   ><i class="fas fa-home"></i> <span>Beranda</span></a
                 >
               </li>
-              <li>
+
+              <!-- Menu for authenticated users -->
+              <li class="auth-only">
                 <a href="#/addstory" class="nav-link"
                   ><i class="fas fa-plus-circle"></i>
                   <span>Tambah Cerita</span></a
                 >
               </li>
-              <li>
+              <li class="auth-only">
                 <a href="#/about" class="nav-link"
                   ><i class="fas fa-info-circle"></i> <span>Tentang</span></a
                 >
               </li>
-              <li class="auth-links">
-                <a href="#/login" class="nav-link login-btn"
+
+              <!-- Menu for guests -->
+              <li class="guest-only">
+                <a href="#/login" class="nav-link"
                   ><i class="fas fa-sign-in-alt"></i> <span>Masuk</span></a
                 >
-                <a href="#/register" class="nav-link register-btn"
+              </li>
+              <li class="guest-only">
+                <a href="#/register" class="nav-link"
                   ><i class="fas fa-user-plus"></i> <span>Daftar</span></a
                 >
+              </li>
+
+              <!-- Logout button -->
+              <li class="auth-only">
+                <button id="logout-btn" class="nav-link logout-btn">
+                  <i class="fas fa-sign-out-alt"></i> <span>Keluar</span>
+                </button>
               </li>
             </ul>
           </nav>

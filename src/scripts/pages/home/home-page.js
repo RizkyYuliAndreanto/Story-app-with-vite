@@ -1,12 +1,13 @@
 import { allStories } from "../../data/api.js";
-import { redirectIfNotAuthenticated } from "../../utils/auth.js";
+import { redirectIfNotAuthenticated, getAuthToken } from "../../utils/auth.js";
 
 export default class HomePage {
   async render() {
-     redirectIfNotAuthenticated();
+    if (!redirectIfNotAuthenticated()) return "";
+
     return `
       <section class="home">
-        <h2><i data-feather="book-open"></i> Daftar Cerita</h2>
+        <h2 style="color: white;"><i data-feather="book-open" style="color: white;"></i> Daftar Cerita</h2>
         <div id="story-list" class="list"></div>
         <div id="map" class="map"></div>
       </section>
@@ -18,9 +19,9 @@ export default class HomePage {
 
     try {
       storyList.innerHTML =
-        '<div class="loading"><i data-feather="loader"></i> Memuat cerita...</div>';
+        '<div class="loading" style="color: white;"><i data-feather="loader" style="color: white;"></i> Memuat cerita...</div>';
 
-      const token = localStorage.getItem("token");
+      const token = getAuthToken();
       if (!token) throw new Error("Anda perlu login terlebih dahulu");
 
       const response = await allStories(token);
@@ -41,15 +42,19 @@ export default class HomePage {
           (story) => `
         <div class="story-card">
           <img src="${story.photoUrl}" alt="${story.name}" />
-          <div class="story-card-content">
-            <h3><i data-feather="user"></i> ${story.name}</h3>
-            <p><i data-feather="align-left"></i> ${story.description}</p>
+          <div class="story-card-content" style="color: white;">
+            <h3 ><i data-feather="user" style="color: white;"></i> ${
+              story.name
+            }</h3>
+            <p><i data-feather="align-left" style="color: white;"></i> ${
+              story.description
+            }</p>
             ${
               story.location
-                ? `<p class="location"><i data-feather="map-pin"></i> ${story.location}</p>`
+                ? `<p class="location" style="color: white;><i data-feather="map-pin" style="color: white;"></i> ${story.location}</p>`
                 : ""
             }
-            <p class="date"><i data-feather="calendar"></i> ${new Date(
+            <p class="date" style="color: white;><i data-feather="calendar" style="color: white;"></i> ${new Date(
               story.createdAt
             ).toLocaleDateString("id-ID", {
               day: "numeric",
@@ -62,20 +67,15 @@ export default class HomePage {
         )
         .join("");
 
-      // Panggil feather.replace() setelah konten dimuat
-      if (window.feather) {
-        feather.replace();
-      }
+      if (window.feather) feather.replace();
     } catch (error) {
       console.error("Error:", error);
       storyList.innerHTML = `
-        <div class="error">
-          <i data-feather="alert-circle"></i> Gagal memuat cerita: ${error.message}
+        <div class="error" style="color: white;">
+          <i data-feather="alert-circle" style="color: white;"></i> Gagal memuat cerita: ${error.message}
         </div>
       `;
-      if (window.feather) {
-        feather.replace();
-      }
+      if (window.feather) feather.replace();
     }
   }
 }
