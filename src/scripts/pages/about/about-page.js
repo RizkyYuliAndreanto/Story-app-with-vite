@@ -1,25 +1,16 @@
-import { redirectIfNotAuthenticated, getAuthUser } from "../../utils/auth.js";
+// src/scripts/pages/about/about-page.js
+import AboutPagePresenter from "../../presenter/about-page-presenter.js";
 
 export default class AboutPage {
+  constructor() {
+    this.presenter = new AboutPagePresenter();
+  }
+
   async render() {
-    // Cek apakah user sudah login, jika tidak arahkan ke login
-    if (!redirectIfNotAuthenticated()) return "";
-
-    const user = getAuthUser();
-
-    return `
-      <section class="container about-container">
-        <h1><i data-feather="info"></i> Tentang Kami</h1>
-        <div class="about-content">
-          <p>Aplikasi ini dibuat untuk berbagi cerita dan pengalaman menarik.</p>
-          <p>Halo, <strong>${user?.name || "Pengguna"}</strong>!</p>
-        </div>
-      </section>
-    `;
+    return this.presenter.render();
   }
 
   async afterRender() {
-    if (window.feather) feather.replace();
-    // Tidak ada fungsi logout di sini
+    await this.presenter.afterRender();
   }
 }

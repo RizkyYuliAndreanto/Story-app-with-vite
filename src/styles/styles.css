@@ -22,7 +22,7 @@ body {
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 99999;
 }
 
 .main-header {
@@ -34,6 +34,7 @@ body {
   justify-content: space-between;
   align-items: center;
   min-height: 70px;
+  z-index: 9999;
 }
 
 .brand-name {
@@ -70,7 +71,7 @@ body {
   backdrop-filter: blur(10px);
   transform: translateX(-100%);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1001;
+  z-index: 99999;
   padding: 1.5rem;
   box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
 }
@@ -395,7 +396,6 @@ body {
 
 /*====== Story List Style Start ======*/
 
-
 .list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -467,6 +467,129 @@ body {
 }
 /*====== Card Style End ======*/
 
+/* =====================MAP HOME STYLE START===================================== */
+
+#home-map {
+  height: 500px;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
+  border: 1px solid #e0e0e0;
+  background-color: #f8f8f8;
+}
+
+/* Kustomisasi kontrol zoom Leaflet */
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: white !important;
+  color: #333 !important;
+  border-radius: 8px !important;
+  font-size: 24px !important;
+  line-height: 24px !important;
+  width: 36px !important;
+  height: 36px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #f0f0f0 !important;
+  color: #007bff !important;
+}
+
+/* Kustomisasi Leaflet Popup */
+.leaflet-popup-content-wrapper {
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  padding: 0;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  padding: 15px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.leaflet-popup-tip {
+  background: white;
+}
+
+.map-popup-content h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.map-popup-content p {
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.map-popup-content .popup-date {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 5px;
+}
+
+/* Kustomisasi Marker Cerita */
+.custom-story-marker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  background-color: #2575fc;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transform: translateY(-50%);
+}
+
+.story-marker-icon {
+  color: white;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Feather icons styling within the map */
+.custom-story-marker [data-feather] {
+  width: 1.2em;
+  height: 1.2em;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+/* Responsif untuk peta */
+@media (max-width: 768px) {
+  #home-map {
+    height: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  #home-map {
+    height: 300px;
+  }
+}
+/* ======================== MAP HOME END================================== */
+
 /*====== Map Style Start ======*/
 #map {
   height: 100%;
@@ -497,6 +620,7 @@ body {
 .leaflet-control-zoom {
   transform: scale(0.8);
   transform-origin: top right;
+  z-index: 9999;
 }
 
 .leaflet-popup {
@@ -508,6 +632,57 @@ body {
   height: 24px !important;
   margin-left: -12px !important;
   margin-top: -12px !important;
+}
+
+.custom-story-marker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  background-color: #2575fc; /* Warna latar belakang marker */
+  border-radius: 50%; /* Bentuk lingkaran */
+  border: 3px solid white; /* Border putih */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Bayangan */
+  transform: translateY(
+    -50%
+  ); /* Penyesuaian vertikal agar pin menunjuk ke bawah */
+}
+
+.story-marker-icon {
+  color: white; /* Warna ikon di dalam marker */
+  font-size: 1.5rem; /* Ukuran ikon Feather */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Styling untuk ikon Feather di dalam marker kustom */
+.custom-story-marker [data-feather] {
+  width: 1.2em;
+  height: 1.2em;
+  stroke: currentColor; /* Menggunakan warna teks parent */
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+/* Styling untuk popup peta */
+.leaflet-popup-content-wrapper {
+  border-radius: 10px; /* Sudut membulat untuk popup */
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); /* Bayangan untuk popup */
+  padding: 0; /* Hapus padding default */
+}
+
+.leaflet-popup-content {
+  margin: 0; /* Hapus margin default */
+  padding: 15px; /* Padding konten popup */
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+.leaflet-popup-tip {
+  background: white; /* Warna panah popup */
 }
 /*====== Map Style End ======*/
 
@@ -559,7 +734,6 @@ form textarea {
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
 
 /*====== Tambah Cerita (Form) Style End ======*/
 
