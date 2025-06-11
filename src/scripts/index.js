@@ -10,7 +10,14 @@ function setupLogout() {
   document.getElementById("logout-btn")?.addEventListener("click", () => {
     clearAuth();
     updateAuthStatus();
-    window.location.hash = "#/login";
+    // Memastikan transisi berjalan saat logout
+    if (document.startViewTransition) {
+      document.startViewTransition(() => {
+        window.location.hash = "#/login";
+      });
+    } else {
+      window.location.hash = "#/login";
+    }
   });
 }
 
@@ -39,6 +46,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       window.location.hash = "#/login";
       return;
     }
-    await app.renderPage();
+
+    // Mengimplementasikan View Transition API
+    if (document.startViewTransition) {
+      document.startViewTransition(async () => {
+        //
+        await app.renderPage();
+      });
+    } else {
+      await app.renderPage();
+    }
   });
 });

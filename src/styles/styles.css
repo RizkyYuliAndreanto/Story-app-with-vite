@@ -1313,3 +1313,38 @@ form textarea {
 .nav-list li:nth-child(4) {
   animation-delay: 0.4s;
 }
+
+/* Custom View Transition Animations (Loading-like effect) */
+
+/* Animasi untuk konten lama yang memudar keluar */
+@keyframes fade-out-down {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px); /* Sedikit bergeser ke bawah saat memudar */
+  }
+}
+
+/* Animasi untuk konten baru yang memudar masuk */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(-20px); /* Muncul dari sedikit di atas */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Menerapkan animasi pada pseudo-element view-transition */
+::view-transition-old(root) {
+  animation: fade-out-down 0.4s ease-out forwards;
+}
+
+::view-transition-new(root) {
+  animation: fade-in-up 0.4s ease-in forwards;
+}
