@@ -3,6 +3,7 @@ import CONFIG from "../config.js";
 import { getAuthToken } from "./auth.js";
 import { subscribeNotification, unsubscribeNotification } from "../data/api.js";
 
+// [DEBUG:notification] Konversi VAPID key base64 ke Uint8Array
 function urlB64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding)
@@ -16,6 +17,7 @@ function urlB64ToUint8Array(base64String) {
   return outputArray;
 }
 
+// [DEBUG:notification] Cek status langganan notifikasi & update UI
 export async function checkNotificationSubscriptionStatus() {
   const notificationToggleBtn = document.getElementById(
     "notification-toggle-btn"
@@ -35,14 +37,17 @@ export async function checkNotificationSubscriptionStatus() {
     notificationToggleBtn.classList.add("subscribed");
     notificationBtnText.textContent = "Nonaktifkan Notifikasi";
     notificationToggleBtn.querySelector("i").className = "fas fa-bell-slash";
+    console.debug("[DEBUG:notification] User sudah berlangganan notifikasi");
   } else {
     notificationToggleBtn.classList.remove("subscribed");
     notificationBtnText.textContent = "Aktifkan Notifikasi";
     notificationToggleBtn.querySelector("i").className = "fas fa-bell";
+    console.debug("[DEBUG:notification] User belum berlangganan notifikasi");
   }
   notificationToggleBtn.style.display = "block";
 }
 
+// [DEBUG:notification] Toggle langganan notifikasi push
 export async function toggleNotificationSubscription() {
   const notificationToggleBtn = document.getElementById(
     "notification-toggle-btn"
@@ -69,7 +74,9 @@ export async function toggleNotificationSubscription() {
 
     if (subscription) {
       await subscription.unsubscribe();
-      console.log("User unsubscribed from push service.");
+      console.debug(
+        "[DEBUG:notification] User unsubscribed from push service."
+      );
       await unsubscribeNotification(token, subscription.endpoint);
       alert("Notifikasi berhasil dinonaktifkan.");
     } else {
@@ -82,18 +89,26 @@ export async function toggleNotificationSubscription() {
         const newSubscription = await registration.pushManager.subscribe(
           options
         );
-        console.log("User subscribed to push service:", newSubscription);
+        console.debug(
+          "[DEBUG:notification] User subscribed to push service:",
+          newSubscription
+        );
         await subscribeNotification(token, newSubscription.toJSON());
         alert("Notifikasi berhasil diaktifkan.");
       } else {
         alert(
           "Izin notifikasi tidak diberikan. Anda tidak akan menerima notifikasi."
         );
-        console.warn("Notification permission not granted.");
+        console.warn(
+          "[DEBUG:notification] Notification permission not granted."
+        );
       }
     }
   } catch (error) {
-    console.error("Failed to toggle push subscription:", error);
+    console.error(
+      "[DEBUG:notification] Failed to toggle push subscription:",
+      error
+    );
     alert(`Gagal mengelola notifikasi: ${error.message}`);
   } finally {
     notificationToggleBtn.disabled = false;
@@ -101,9 +116,12 @@ export async function toggleNotificationSubscription() {
   }
 }
 
+// [DEBUG:notification] Subscribe user ke push notification secara otomatis
 export async function subscribeUserToPush(registration) {
   if (!("PushManager" in window)) {
-    console.warn("Push notifications are not supported in this browser.");
+    console.warn(
+      "[DEBUG:notification] Push notifications are not supported in this browser."
+    );
     return;
   }
   const token = getAuthToken();
@@ -115,11 +133,17 @@ export async function subscribeUserToPush(registration) {
       const applicationServerKey = urlB64ToUint8Array(CONFIG.VAPID_PUBLIC_KEY);
       const options = { applicationServerKey, userVisibleOnly: true };
       const newSubscription = await registration.pushManager.subscribe(options);
-      console.log("User subscribed automatically:", newSubscription);
+      console.debug(
+        "[DEBUG:notification] User subscribed automatically:",
+        newSubscription
+      );
       await subscribeNotification(token, newSubscription.toJSON());
     }
   } catch (error) {
-    console.error("Failed to subscribe automatically:", error);
+    console.error(
+      "[DEBUG:notification] Failed to subscribe automatically:",
+      error
+    );
   }
   await checkNotificationSubscriptionStatus();
 }

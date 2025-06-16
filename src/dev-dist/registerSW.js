@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/Story-app-with-vite/dev-sw.js?dev-sw', { scope: '/Story-app-with-vite/', type: 'classic' })

@@ -1,8 +1,8 @@
 // src/data/api.js
 import CONFIG from "../config.js";
-//
 import { addStoryToDb, getAllStoriesFromDb } from "../utils/indexeddb.js";
 
+// Debug: Daftar endpoint API
 const ENDPOINTS = {
   STORIES: `${CONFIG.BASE_URL}/stories`,
   ABOUT: `${CONFIG.BASE_URL}/about`,
@@ -11,15 +11,13 @@ const ENDPOINTS = {
     REGISTER: `${CONFIG.BASE_URL}/register`,
     LOGOUT: `${CONFIG.BASE_URL}/logout`,
   },
-  // --- ENDPOINT BARU UNTUK NOTIFIKASI ---
   NOTIFICATIONS: {
     SUBSCRIBE: `${CONFIG.BASE_URL}/notifications/subscribe`,
     UNSUBSCRIBE: `${CONFIG.BASE_URL}/notifications/subscribe`,
   },
-  // --- AKHIR ENDPOINT BARU ---
 };
 
-
+// Debug: Fungsi register user
 export async function registerUser(userData) {
   const response = await fetch(ENDPOINTS.AUTH.REGISTER, {
     method: "POST",
@@ -31,6 +29,7 @@ export async function registerUser(userData) {
   return response.json();
 }
 
+// Debug: Fungsi login user
 export async function loginUser(userData) {
   const response = await fetch(ENDPOINTS.AUTH.LOGIN, {
     method: "POST",
@@ -51,6 +50,7 @@ export async function loginUser(userData) {
   return data;
 }
 
+// Debug: Ambil semua cerita (dengan fallback offline)
 export async function allStories(token) {
   try {
     const response = await fetch(ENDPOINTS.STORIES, {
@@ -67,7 +67,6 @@ export async function allStories(token) {
     }
 
     if (data.listStory && Array.isArray(data.listStory)) {
-    
       data.listStory.forEach(async (story) => {
         await addStoryToDb(story);
       });
@@ -76,7 +75,7 @@ export async function allStories(token) {
     return data;
   } catch (error) {
     console.error("Error fetching stories from API:", error);
-    
+    // Debug: Fallback ke IndexedDB jika offline
     const cachedStories = await getAllStoriesFromDb();
     if (cachedStories && cachedStories.length > 0) {
       console.log("Mengambil cerita dari IndexedDB (offline mode).");
@@ -90,6 +89,7 @@ export async function allStories(token) {
   }
 }
 
+// Debug: Tambah cerita baru
 export async function addStory(formData, token) {
   try {
     const response = await fetch(ENDPOINTS.STORIES, {
@@ -114,7 +114,6 @@ export async function addStory(formData, token) {
         createdAt: new Date().toISOString(),
         name: "Nama Pengguna",
       };
-      // Menggunakan addStoryToDb - pastikan indexeddb.js ada
       await addStoryToDb(newStory);
     }
 
@@ -125,6 +124,7 @@ export async function addStory(formData, token) {
   }
 }
 
+// Debug: Konversi dataURL ke Blob
 export function dataURLtoBlob(dataURL) {
   const arr = dataURL.split(",");
   const mime = arr[0].match(/:(.*?);/)[1];
@@ -139,15 +139,12 @@ export function dataURLtoBlob(dataURL) {
   return new Blob([u8arr], { type: mime });
 }
 
-// --- FUNGSI BARU UNTUK NOTIFIKASI ---
-
+// Debug: Subscribe notifikasi push
 export async function subscribeNotification(token, subscription) {
   try {
-   
     const requestBody = {
       endpoint: subscription.endpoint,
       keys: {
-        
         p256dh: subscription.keys.p256dh,
         auth: subscription.keys.auth,
       },
@@ -159,13 +156,12 @@ export async function subscribeNotification(token, subscription) {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(requestBody), // Gunakan requestBody yang diformat
+      body: JSON.stringify(requestBody),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      // Tangkap pesan error dari respons API jika ada
       throw new Error(
         data.message ||
           `Gagal berlangganan notifikasi. Status: ${response.status}`
@@ -178,6 +174,7 @@ export async function subscribeNotification(token, subscription) {
   }
 }
 
+// Debug: Unsubscribe notifikasi push
 export async function unsubscribeNotification(token, endpoint) {
   try {
     const response = await fetch(ENDPOINTS.NOTIFICATIONS.UNSUBSCRIBE, {
@@ -202,10 +199,9 @@ export async function unsubscribeNotification(token, endpoint) {
     throw error;
   }
 }
-// --- AKHIR FUNGSI BARU ---
 
+// Debug: Ambil detail cerita berdasarkan ID
 export async function getStoryById(id, token) {
-  // <-- Pastikan ada 'export' di sini
   try {
     const response = await fetch(`${ENDPOINTS.STORIES}/${id}`, {
       headers: {
@@ -221,7 +217,7 @@ export async function getStoryById(id, token) {
         data.message || `Gagal mengambil detail cerita ID: ${id}`
       );
     }
-    return data.story; // API mengembalikan objek 'story' di dalamnya
+    return data.story;
   } catch (error) {
     console.error(`Error fetching detail story ID ${id} from API:`, error);
     throw error;
