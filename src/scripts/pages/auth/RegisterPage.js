@@ -7,7 +7,7 @@ export default class RegisterPage {
   }
 
   async render() {
-    return this.presenter.render();
+    return await this.presenter.render();
   }
 
   async afterRender() {
