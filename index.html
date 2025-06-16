@@ -4,13 +4,16 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Story App</title>
-    <link rel="manifest" href="/Story-app-with-vite/manifest.json" />
+    <link rel="manifest" href="./manifest.webmanifest" />
     <meta name="theme-color" content="#304ffe" />
+    
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />   <script type="module" crossorigin src="/Story-app-with-vite/assets/index-VpXLfe1y.js"></script>
-   <link rel="stylesheet" crossorigin href="/Story-app-with-vite/assets/index-BWVKniEB.css">
- <link rel="manifest" href="/Story-app-with-vite/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/Story-app-with-vite/registerSW.js"></script></head>
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+      <script type="module" crossorigin src="/Story-app-with-vite/assets/index-VpXLfe1y.js"></script>
+      <link rel="stylesheet" crossorigin href="/Story-app-with-vite/assets/index-BWVKniEB.css">
+    <link rel="manifest" href="/Story-app-with-vite/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/Story-app-with-vite/registerSW.js"></script></head>
   <body>
     <header class="main-header-wrapper">
       <div class="main-header container">
@@ -19,6 +22,10 @@
             <i class="fas fa-book-open"></i>
             <span>StoryApp</span>
           </a>
+
+          <button id="drawer-button" class="drawer-button">
+            <i class="fas fa-bars"></i>
+          </button>
 
           <nav id="navigation-drawer" class="navigation-drawer">
             <ul id="nav-list" class="nav-list">
@@ -73,10 +80,6 @@
               </li>
             </ul>
           </nav>
-
-          <button id="drawer-button" class="drawer-button">
-            <i class="fas fa-bars"></i>
-          </button>
         </div>
       </div>
     </header>
@@ -85,12 +88,15 @@
 
     <main id="main-content" class="main-content container"></main>
 
-    <script src="https://unpkg.com/feather-icons"></script> <script>
-      // DOMContentLoaded listener ini untuk Feather Icons dan class 'active' pada nav-link
-      // Ini terpisah dari event DOMContentLoaded di index.js Anda, jadi tidak masalah.
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    
+    <script>
+   
       document.addEventListener("DOMContentLoaded", function () {
         feather.replace();
 
+      
         const currentPath =
           window.location.hash.split("?")[0].split("/")[0] || "#/";
         document
