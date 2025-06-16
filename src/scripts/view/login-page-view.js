@@ -1,4 +1,4 @@
-// src/pages/auth/login-page-view.js
+// src/scripts/view/login-page-view.js
 class LoginPageView {
   constructor() {
     this.loginForm = null;
@@ -6,9 +6,11 @@ class LoginPageView {
     this.passwordInput = null;
     this.emailInput = null;
     this.submitBtn = null;
+    console.log("LoginPageView: Constructor called."); // Tambahan log
   }
 
   render() {
+    console.log("LoginPageView: render() called, returning HTML string."); // Tambahan log
     return `
         <div class="auth-container">
           <div class="auth-header">
@@ -52,42 +54,76 @@ class LoginPageView {
   // Method untuk mendapatkan elemen DOM setelah render
   getElements() {
     this.loginForm = document.getElementById("login-form");
+    console.log("LoginPageView: loginForm element found?", !!this.loginForm); // Tambahan log
     this.togglePasswordButton = document.querySelector(".toggle-password");
+    console.log(
+      "LoginPageView: togglePasswordButton element found?",
+      !!this.togglePasswordButton
+    ); // Tambahan log
     this.passwordInput = document.getElementById("password");
+    console.log(
+      "LoginPageView: passwordInput element found?",
+      !!this.passwordInput
+    ); // Tambahan log
     this.emailInput = document.getElementById("email");
+    console.log("LoginPageView: emailInput element found?", !!this.emailInput); // Tambahan log
     this.submitBtn = this.loginForm?.querySelector('button[type="submit"]');
+    console.log("LoginPageView: submitBtn element found?", !!this.submitBtn); // Tambahan log
   }
 
   // Method untuk mendaftarkan event listener
   bindTogglePassword(handler) {
-    this.togglePasswordButton?.addEventListener("click", handler);
+    if (this.togglePasswordButton) {
+      // Periksa keberadaan elemen sebelum menambahkan event listener
+      this.togglePasswordButton.addEventListener("click", handler); //
+      console.log(
+        "LoginPageView: Toggle password button event listener bound."
+      ); // Tambahan log
+    } else {
+      console.warn(
+        "LoginPageView: Toggle password button not found, cannot bind event."
+      ); // Tambahan log
+    }
   }
 
   bindLoginFormSubmit(handler) {
-    this.loginForm?.addEventListener("submit", handler);
+    if (this.loginForm) {
+      // Periksa keberadaan elemen sebelum menambahkan event listener
+      this.loginForm.addEventListener("submit", handler); //
+      console.log("LoginPageView: Login form submit event listener bound."); // Tambahan log
+    } else {
+      console.warn("LoginPageView: Login form not found, cannot bind event."); // Tambahan log
+    }
   }
 
   // Method untuk mendapatkan nilai input
   getEmail() {
-    return this.emailInput?.value.trim();
+    return this.emailInput?.value.trim(); //
   }
 
   getPassword() {
-    return this.passwordInput?.value.trim();
+    return this.passwordInput?.value.trim(); //
   }
 
   // Method untuk menampilkan/menyembunyikan password
   togglePasswordVisibility() {
+    if (!this.passwordInput || !this.togglePasswordButton) {
+      console.warn(
+        "LoginPageView: Password input or toggle button not found for visibility toggle."
+      );
+      return;
+    }
     const type =
       this.passwordInput.getAttribute("type") === "password"
         ? "text"
         : "password";
-    this.passwordInput.setAttribute("type", type);
+    this.passwordInput.setAttribute("type", type); //
     this.togglePasswordButton.innerHTML =
       type === "password"
         ? '<i data-feather="eye"></i>'
         : '<i data-feather="eye-off"></i>';
-    if (window.feather) feather.replace();
+    if (window.feather) feather.replace(); //
+    console.log(`LoginPageView: Password visibility toggled to ${type}.`); // Tambahan log
   }
 
   // Method untuk menampilkan pesan error
@@ -95,6 +131,7 @@ class LoginPageView {
     const emailError = document.getElementById("email-error");
     if (emailError) {
       emailError.textContent = message;
+      console.log(`LoginPageView: Email error displayed: ${message}`); // Tambahan log
     }
   }
 
@@ -102,23 +139,27 @@ class LoginPageView {
     const passwordError = document.getElementById("password-error");
     if (passwordError) {
       passwordError.textContent = message;
+      console.log(`LoginPageView: Password error displayed: ${message}`); // Tambahan log
     }
   }
 
   clearErrors() {
     this.showEmailError("");
     this.showPasswordError("");
+    console.log("LoginPageView: All errors cleared."); // Tambahan log
   }
 
-  
   setSubmitButtonLoading(isLoading) {
-    if (!this.submitBtn) return;
+    if (!this.submitBtn) return; //
 
-    this.submitBtn.disabled = isLoading;
+    this.submitBtn.disabled = isLoading; //
     this.submitBtn.innerHTML = isLoading
       ? '<i data-feather="loader" class="spinning"></i> Memproses...'
-      : '<i data-feather="log-in"></i> Login';
-    if (window.feather) feather.replace();
+      : '<i data-feather="log-in"></i> Login'; //
+    if (window.feather) feather.replace(); //
+    console.log(
+      `LoginPageView: Submit button loading state set to ${isLoading}.`
+    ); // Tambahan log
   }
 }
 
