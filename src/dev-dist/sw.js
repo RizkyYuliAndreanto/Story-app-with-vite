@@ -67,7 +67,7 @@ if (!self.define) {
     });
   };
 }
-define(['./workbox-a959eb95'], (function (workbox) { 'use strict';
+define(['./workbox-3ad5617a'], (function (workbox) { 'use strict';
 
   self.skipWaiting();
   workbox.clientsClaim();
@@ -78,11 +78,11 @@ define(['./workbox-a959eb95'], (function (workbox) { 'use strict';
    * See https://goo.gl/S9QRab
    */
   workbox.precacheAndRoute([{
-    "url": "registerSW.js",
+    "url": "/Story-app-with-vite/registerSW.js",
     "revision": "7408e621b56b62314c133d986e278377"
   }, {
     "url": "/Story-app-with-vite/",
-    "revision": "0.g248vptss68"
+    "revision": "0.neu06npeneo"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/Story-app-with-vite/"), {
@@ -108,15 +108,20 @@ define(['./workbox-a959eb95'], (function (workbox) { 'use strict';
       maxAgeSeconds: 2592000
     })]
   }), 'GET');
-  workbox.registerRoute(({
-    url
-  }) => url.href.includes("story-api.dicoding.dev/images/stories/"), new workbox.CacheFirst({
+  workbox.registerRoute(/^https:\/\/story-api\.dicoding\.dev\/images\/stories\/.*\.(png|jpg|jpeg|gif|webp|blob)$/, new workbox.StaleWhileRevalidate({
     "cacheName": "story-images-cache",
     plugins: [new workbox.ExpirationPlugin({
       maxEntries: 100,
       maxAgeSeconds: 2592000
     }), new workbox.CacheableResponsePlugin({
       statuses: [0, 200]
+    })]
+  }), 'GET');
+  workbox.registerRoute(/\.\/(images|icons|screenshot)\/.*\.(png|jpg|jpeg|svg|webp)$/, new workbox.CacheFirst({
+    "cacheName": "static-assets-cache",
+    plugins: [new workbox.ExpirationPlugin({
+      maxEntries: 100,
+      maxAgeSeconds: 2592000
     })]
   }), 'GET');
 

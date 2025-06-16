@@ -1,4 +1,6 @@
 // src/scripts/index.js
+
+// Impor file CSS utama Anda. Vite akan mengurus bundling-nya.
 import "../styles/styles.css";
 import { isAuthenticated, clearAuth, isProtectedRoute } from "./utils/auth";
 import App from "./pages/app";
@@ -11,21 +13,23 @@ import {
 // Debug: File index.js dimuat
 console.debug("[index.js] Loaded");
 
+const APP_BASE_URL = "/Story-app-with-vite/";
+
+// Debug: Update status autentikasi
 function updateAuthStatus() {
   const isUserAuthenticated = isAuthenticated();
   document.body.classList.toggle("authenticated", isUserAuthenticated);
   checkNotificationSubscriptionStatus();
-  // Debug: Status autentikasi diperbarui
   console.debug("[index.js] updateAuthStatus:", { isUserAuthenticated });
 }
 
+// Debug: Setup tombol logout
 function setupLogout() {
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       clearAuth();
       updateAuthStatus();
-      // Debug: Logout diklik
       console.debug("[index.js] Logout clicked, redirecting to #/login");
       if (document.startViewTransition) {
         document.startViewTransition(() => {
@@ -35,14 +39,13 @@ function setupLogout() {
         window.location.hash = "#/login";
       }
     });
-    // Debug: Logout button listener terpasang
     console.debug("[index.js] Logout button listener attached");
   } else {
-    // Debug: Logout button tidak ditemukan
     console.warn("[index.js] Logout button not found");
   }
 }
 
+// Debug: Setup toggle notifikasi
 function setupNotificationToggle() {
   const notificationToggleBtn = document.getElementById(
     "notification-toggle-btn"
@@ -53,16 +56,13 @@ function setupNotificationToggle() {
       toggleNotificationSubscription
     );
     checkNotificationSubscriptionStatus();
-    // Debug: Notification toggle listener terpasang
     console.debug("[index.js] Notification toggle listener attached");
   } else {
-    // Debug: Notification toggle button tidak ditemukan
     console.warn("[index.js] Notification toggle button not found");
   }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Debug: DOMContentLoaded
   console.debug("[index.js] DOMContentLoaded");
 
   const mainContentEl = document.querySelector("#main-content");
@@ -70,7 +70,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const navigationDrawerEl = document.querySelector("#navigation-drawer");
   const sidebarOverlayEl = document.querySelector(".sidebar-overlay");
 
-  // Debug: Cek elemen DOM
   console.debug("[index.js] DOM elements", {
     mainContentEl: !!mainContentEl,
     drawerButtonEl: !!drawerButtonEl,
@@ -88,19 +87,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  // Debug: Inisialisasi App utama
   const app = new App({
     content: mainContentEl,
     drawerButton: drawerButtonEl,
     navigationDrawer: navigationDrawerEl,
     sidebarOverlay: sidebarOverlayEl,
   });
-  // Debug: App instance dibuat
   console.debug("[index.js] App instance created");
 
+  // Debug: Guard rute awal
   const currentHash = window.location.hash;
   const authStatus = isAuthenticated();
   const protectedRoute = isProtectedRoute(currentHash);
-  // Debug: Guard awal rute
   console.debug("[index.js] Route guard", {
     currentHash,
     authStatus,
@@ -115,38 +114,44 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   updateAuthStatus();
 
-  if ("serviceWorker" in navigator) {
-    // Debug: Service Worker support
-    console.debug("[index.js] Service Worker supported");
+  // Debug: Registrasi Service Worker hanya di production
+  if ("serviceWorker" in navigator && import.meta.env.PROD) {
+    console.debug("[index.js] Service Worker supported and in production mode");
     try {
-      const registration = await navigator.serviceWorker.register("/sw.js");
-      // Debug: Service Worker registered
+      const swUrl = `${APP_BASE_URL}sw.js`;
+      const registration = await navigator.serviceWorker.register(swUrl, {
+        scope: APP_BASE_URL,
+      });
       console.debug("[index.js] Service Worker registered", {
         scope: registration.scope,
       });
+      // Debug: Aktifkan push notification jika diperlukan
       // subscribeUserToPush(registration);
     } catch (error) {
       console.error("[index.js] Service Worker registration failed", error);
     }
+  } else if (!import.meta.env.PROD) {
+    console.warn(
+      "[index.js] Service Worker registration skipped in development mode."
+    );
   } else {
-    console.warn("[index.js] Service Worker not supported");
+    console.warn("[index.js] Service Worker not supported by browser.");
   }
 
+  // Debug: Render halaman awal
   await app.renderPage();
-  // Debug: Halaman dirender pertama kali
   console.debug("[index.js] app.renderPage() initial");
 
   setupLogout();
   setupNotificationToggle();
 
+  // Debug: Routing hashchange
   window.addEventListener("hashchange", async () => {
-    // Debug: Hashchange event
     console.debug("[index.js] hashchange");
 
     const newHash = window.location.hash;
     const newAuthStatus = isAuthenticated();
     const newProtectedRoute = isProtectedRoute(newHash);
-    // Debug: Guard hashchange
     console.debug("[index.js] Hashchange guard", {
       newHash,
       newAuthStatus,
@@ -167,7 +172,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       await app.renderPage();
     }
     updateAuthStatus();
-    // Debug: Halaman dirender setelah hashchange
     console.debug("[index.js] app.renderPage() after hashchange");
   });
 });

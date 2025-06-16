@@ -1,2 +1,2 @@
-APP_URL=<url_aplikasi>
+APP_URL= https://rizkyyuliandreanto.github.io/Story-app-with-vite/#/
 MAP_SERVICE_API_KEY=<api_key>
