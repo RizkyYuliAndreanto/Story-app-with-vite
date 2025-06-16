@@ -4,6 +4,9 @@ import { resolve } from "path";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  
+  base: "/Story-app-with-vite/", 
+
   root: resolve(__dirname, "src"),
   publicDir: resolve(__dirname, "src", "public"),
   build: {
@@ -18,16 +21,12 @@ export default defineConfig({
   plugins: [
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: [
-        "favicon.png",
-        "images/*.png",
-        "screenshot/*.png",
-      ],
+      includeAssets: ["favicon.png", "images/*.png", "screenshot/*.png"],
       manifest: {
         name: "Story App Dicoding",
         short_name: "StoryApp",
         description: "Aplikasi untuk berbagi cerita dari Dicoding.",
-        start_url: "/",
+        start_url: "/", // Ini mungkin perlu disesuaikan juga, tergantung router Anda
         display: "standalone",
         background_color: "#ffffff",
         theme_color: "#304ffe",

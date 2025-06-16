@@ -1,7 +1,6 @@
 // src/data/api.js
 import CONFIG from "../config.js";
-// Asumsi ada file indexeddb.js untuk addStoryToDb dan getAllStoriesFromDb
-// Jika tidak ada, fungsi yang menggunakannya akan menyebabkan error.
+//
 import { addStoryToDb, getAllStoriesFromDb } from "../utils/indexeddb.js";
 
 const ENDPOINTS = {
@@ -20,7 +19,7 @@ const ENDPOINTS = {
   // --- AKHIR ENDPOINT BARU ---
 };
 
-// Fungsi-fungsi yang ada sebelumnya (disertakan untuk konteks)
+
 export async function registerUser(userData) {
   const response = await fetch(ENDPOINTS.AUTH.REGISTER, {
     method: "POST",
@@ -68,7 +67,7 @@ export async function allStories(token) {
     }
 
     if (data.listStory && Array.isArray(data.listStory)) {
-      // Menggunakan addStoryToDb - pastikan indexeddb.js ada
+    
       data.listStory.forEach(async (story) => {
         await addStoryToDb(story);
       });
@@ -77,7 +76,7 @@ export async function allStories(token) {
     return data;
   } catch (error) {
     console.error("Error fetching stories from API:", error);
-    // Menggunakan getAllStoriesFromDb - pastikan indexeddb.js ada
+    
     const cachedStories = await getAllStoriesFromDb();
     if (cachedStories && cachedStories.length > 0) {
       console.log("Mengambil cerita dari IndexedDB (offline mode).");
@@ -144,11 +143,11 @@ export function dataURLtoBlob(dataURL) {
 
 export async function subscribeNotification(token, subscription) {
   try {
-    // Ekstrak data yang dibutuhkan sesuai format API
+   
     const requestBody = {
       endpoint: subscription.endpoint,
       keys: {
-        // API mengharapkan keys sebagai objek dengan p256dh dan auth
+        
         p256dh: subscription.keys.p256dh,
         auth: subscription.keys.auth,
       },
