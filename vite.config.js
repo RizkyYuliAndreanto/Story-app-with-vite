@@ -1,12 +1,11 @@
-// vite.config.js
 import { defineConfig } from "vite";
 import { resolve } from "path";
 import { VitePWA } from "vite-plugin-pwa";
 
-export default defineConfig({
-  
-  base: "/Story-app-with-vite/", 
+const BASE_URL = "/Story-app-with-vite/";
 
+export default defineConfig({
+  base: BASE_URL,
   root: resolve(__dirname, "src"),
   publicDir: resolve(__dirname, "src", "public"),
   build: {
@@ -21,12 +20,14 @@ export default defineConfig({
   plugins: [
     VitePWA({
       registerType: "autoUpdate",
+      strategies: "generateSW",
+      srcDir: "src",
       includeAssets: ["favicon.png", "images/*.png", "screenshot/*.png"],
       manifest: {
         name: "Story App Dicoding",
         short_name: "StoryApp",
         description: "Aplikasi untuk berbagi cerita dari Dicoding.",
-        start_url: "/", // Ini mungkin perlu disesuaikan juga, tergantung router Anda
+        start_url: BASE_URL,
         display: "standalone",
         background_color: "#ffffff",
         theme_color: "#304ffe",
@@ -99,7 +100,7 @@ export default defineConfig({
             name: "Tambah Cerita Baru",
             short_name: "Tambah",
             description: "Menambahkan cerita baru ke aplikasi.",
-            url: "/#/addstory",
+            url: `${BASE_URL}#/addstory`,
             icons: [{ src: "images/add-icon-x192.png", sizes: "192x192" }],
           },
         ],
@@ -135,7 +136,8 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,png,jpg,svg,ico,json}"],
+        globPatterns: ["**/*.{js,css,html,png,jpg,svg,ico,json,webmanifest}"],
+        navigateFallback: BASE_URL,
         runtimeCaching: [
           {
             urlPattern: ({ url }) =>
@@ -143,13 +145,8 @@ export default defineConfig({
             handler: "NetworkFirst",
             options: {
               cacheName: "api-cache",
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 7,
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
@@ -159,10 +156,7 @@ export default defineConfig({
             handler: "CacheFirst",
             options: {
               cacheName: "external-assets-cache",
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30,
-              },
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
           {
@@ -171,17 +165,18 @@ export default defineConfig({
             handler: "CacheFirst",
             options: {
               cacheName: "story-images-cache",
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30,
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
         ],
       },
+    
+      devOptions: {
+        enabled: true, 
+       
+      },
+    
     }),
   ],
   server: {
