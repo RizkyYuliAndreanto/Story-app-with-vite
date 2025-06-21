@@ -13,9 +13,8 @@ class DetailStoryPresenter {
 
   async render() {
     // Ambil ID cerita dari URL
-    const urlSegments = getActivePathname().split("/"); // Misalnya '/stories/story-123'
-    this.storyId = urlSegments[2]; // ID cerita ada di segmen ketiga
-
+    const urlSegments = getActivePathname().split("/"); 
+    this.storyId = urlSegments[2]; 
     if (!this.storyId) {
       return `<section class="detail-story-page"><p class="error-message" style="color: white;">ID cerita tidak ditemukan di URL.</p></section>`;
     }
@@ -76,9 +75,7 @@ class DetailStoryPresenter {
       bookmarkButton.removeEventListener(
         "click",
         this._initializeBookmarkButton
-      ); // Ini mungkin salah, perlu referensi fungsi yang tepat
-      // Lebih baik: ketika mengikat listener, bind ke this._boundBookmarkHandler = this._onBookmarkClick.bind(this);
-      // Lalu di cleanup: bookmarkButton.removeEventListener('click', this._boundBookmarkHandler);
+      ); 
     }
     console.log("Cleanup DetailStoryPresenter.");
   }

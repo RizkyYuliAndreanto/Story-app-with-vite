@@ -13,14 +13,19 @@ import {
 // Debug: File index.js dimuat
 console.debug("[index.js] Loaded");
 
+// Base URL aplikasi Anda. PENTING: HARUS SESUAI dengan `start_url` di manifest
+// dan `scope` service worker.
 const APP_BASE_URL = "/Story-app-with-vite/";
 
-// Debug: Update status autentikasi
+// Debug: Update status autentikasi dan UI terkait
 function updateAuthStatus() {
   const isUserAuthenticated = isAuthenticated();
   document.body.classList.toggle("authenticated", isUserAuthenticated);
+  // Panggil checkNotificationSubscriptionStatus untuk update UI tombol notifikasi
   checkNotificationSubscriptionStatus();
-  console.debug("[index.js] updateAuthStatus:", { isUserAuthenticated });
+  console.debug("[index.js] updateAuthStatus:", {
+    isUserAuthenticated,
+  });
 }
 
 // Debug: Setup tombol logout
@@ -28,9 +33,10 @@ function setupLogout() {
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
-      clearAuth();
-      updateAuthStatus();
+      clearAuth(); // Hapus token autentikasi
+      updateAuthStatus(); // Perbarui status UI
       console.debug("[index.js] Logout clicked, redirecting to #/login");
+      // Gunakan View Transitions API jika didukung untuk transisi yang mulus
       if (document.startViewTransition) {
         document.startViewTransition(() => {
           window.location.hash = "#/login";
@@ -45,7 +51,7 @@ function setupLogout() {
   }
 }
 
-// Debug: Setup toggle notifikasi
+// Debug: Setup tombol toggle notifikasi push
 function setupNotificationToggle() {
   const notificationToggleBtn = document.getElementById(
     "notification-toggle-btn"
@@ -55,6 +61,7 @@ function setupNotificationToggle() {
       "click",
       toggleNotificationSubscription
     );
+    // Panggil ini untuk update UI awal tombol saat DOMContentLoaded
     checkNotificationSubscriptionStatus();
     console.debug("[index.js] Notification toggle listener attached");
   } else {
@@ -65,6 +72,7 @@ function setupNotificationToggle() {
 document.addEventListener("DOMContentLoaded", async () => {
   console.debug("[index.js] DOMContentLoaded");
 
+  // Dapatkan referensi elemen DOM yang diperlukan
   const mainContentEl = document.querySelector("#main-content");
   const drawerButtonEl = document.querySelector("#drawer-button");
   const navigationDrawerEl = document.querySelector("#navigation-drawer");
@@ -77,6 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     sidebarOverlayEl: !!sidebarOverlayEl,
   });
 
+  // Periksa apakah semua elemen DOM yang diperlukan ada
   if (
     !mainContentEl ||
     !drawerButtonEl ||
@@ -87,7 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Debug: Inisialisasi App utama
+  // Inisialisasi instance App utama
   const app = new App({
     content: mainContentEl,
     drawerButton: drawerButtonEl,
@@ -96,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   console.debug("[index.js] App instance created");
 
-  // Debug: Guard rute awal
+  // Guard rute awal: Redirect ke halaman login jika rute dilindungi dan user belum autentikasi
   const currentHash = window.location.hash;
   const authStatus = isAuthenticated();
   const protectedRoute = isProtectedRoute(currentHash);
@@ -108,44 +117,41 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (protectedRoute && !authStatus) {
     console.debug("[index.js] Redirect unauthenticated to #/login");
-    sessionStorage.setItem("returnTo", currentHash);
+    sessionStorage.setItem("returnTo", currentHash); // Simpan rute saat ini untuk kembali setelah login
     window.location.hash = "#/login";
   }
 
+  // Perbarui status autentikasi UI awal
   updateAuthStatus();
 
-  // Debug: Registrasi Service Worker hanya di production
-  if ("serviceWorker" in navigator && import.meta.env.PROD) {
-    console.debug("[index.js] Service Worker supported and in production mode");
-    try {
-      const swUrl = `${APP_BASE_URL}sw.js`;
-      const registration = await navigator.serviceWorker.register(swUrl, {
-        scope: APP_BASE_URL,
-      });
-      console.debug("[index.js] Service Worker registered", {
-        scope: registration.scope,
-      });
-      // Debug: Aktifkan push notification jika diperlukan
-      // subscribeUserToPush(registration);
-    } catch (error) {
-      console.error("[index.js] Service Worker registration failed", error);
-    }
-  } else if (!import.meta.env.PROD) {
-    console.warn(
-      "[index.js] Service Worker registration skipped in development mode."
+  // --- Opsional: Panggil subscribeUserToPush jika ingin auto-subscribe setelah SW siap ---
+  // Pastikan ada kondisi yang sesuai (misal: user sudah login) agar tidak meminta izin berlebihan.
+  if ("serviceWorker" in navigator && isAuthenticated()) {
+    console.debug(
+      "[index.js] Service Worker supported and user authenticated. Attempting auto-subscribe to push."
+    );
+    // navigator.serviceWorker.ready akan menunggu service worker terdaftar dan aktif.
+    const registration = await navigator.serviceWorker.ready;
+    subscribeUserToPush(registration);
+  } else if (!isAuthenticated()) {
+    console.debug(
+      "[index.js] User not authenticated, skipping auto-subscribe to push."
     );
   } else {
-    console.warn("[index.js] Service Worker not supported by browser.");
+    console.warn(
+      "[index.js] Service Worker not supported by browser, skipping auto-subscribe to push."
+    );
   }
 
-  // Debug: Render halaman awal
+  // Render halaman awal aplikasi
   await app.renderPage();
   console.debug("[index.js] app.renderPage() initial");
 
+  // Setup event listener untuk tombol logout dan notifikasi
   setupLogout();
   setupNotificationToggle();
 
-  // Debug: Routing hashchange
+  // Event listener untuk perubahan hash (routing sisi klien)
   window.addEventListener("hashchange", async () => {
     console.debug("[index.js] hashchange");
 
@@ -164,6 +170,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       window.location.hash = "#/login";
     }
 
+    // Gunakan View Transitions API untuk transisi halaman yang mulus
     if (document.startViewTransition) {
       document.startViewTransition(async () => {
         await app.renderPage();
@@ -171,7 +178,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else {
       await app.renderPage();
     }
-    updateAuthStatus();
+    updateAuthStatus(); // Perbarui status UI notifikasi setelah hashchange
     console.debug("[index.js] app.renderPage() after hashchange");
   });
 });

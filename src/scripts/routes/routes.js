@@ -9,14 +9,14 @@ import BookmarkPage from "../pages/bookmark/bookmark-page";
 import DetailStoryPage from "../pages/detail-story/detail-story-page";
 
 const routes = {
-  "/": HomePage, // Kelas
-  "/about": AboutPage, // Kelas
-  "/addstory": AddStory, // Kelas
-  "/login": LoginPage, // Kelas (Login/Register tidak dilindungi, jadi bisa diakses)
-  "/register": RegisterPage, // Kelas
-  "/not-found": NotFoundPage, // Kelas
-  "/bookmark": BookmarkPage, // Kelas
-  "/stories/:id": DetailStoryPage, // Kelas - Pastikan format ini konsisten dengan getRoute
+  "/": HomePage, 
+  "/about": AboutPage, 
+  "/addstory": AddStory,
+  "/login": LoginPage, 
+  "/register": RegisterPage, 
+  "/not-found": NotFoundPage, 
+  "/bookmark": BookmarkPage, 
+  "/stories/:id": DetailStoryPage, 
 };
 
 export default routes;

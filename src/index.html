@@ -4,7 +4,6 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Story App</title>
-    <link rel="manifest" href="./manifest.webmanifest" />
     <meta name="theme-color" content="#304ffe" />
     
     <link
@@ -91,11 +90,10 @@
     <script type="module" src="./scripts/index.js"></script>
     
     <script>
-   
+      // Script untuk inisialisasi Feather Icons dan penandaan navigasi aktif
       document.addEventListener("DOMContentLoaded", function () {
         feather.replace();
 
-      
         const currentPath =
           window.location.hash.split("?")[0].split("/")[0] || "#/";
         document

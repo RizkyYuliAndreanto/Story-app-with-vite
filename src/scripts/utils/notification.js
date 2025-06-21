@@ -1,7 +1,7 @@
 // src/scripts/utils/notification.js
-import CONFIG from "../config.js";
-import { getAuthToken } from "./auth.js";
-import { subscribeNotification, unsubscribeNotification } from "../data/api.js";
+import CONFIG from "../config.js"; // Sesuaikan path jika berbeda
+import { getAuthToken } from "./auth.js"; // Sesuaikan path jika berbeda
+import { subscribeNotification, unsubscribeNotification } from "../data/api.js"; // Sesuaikan path jika berbeda
 
 // [DEBUG:notification] Konversi VAPID key base64 ke Uint8Array
 function urlB64ToUint8Array(base64String) {
@@ -17,7 +17,7 @@ function urlB64ToUint8Array(base64String) {
   return outputArray;
 }
 
-// [DEBUG:notification] Cek status langganan notifikasi & update UI
+// [DEBUG:notification] Cek status langganan notifikasi & update UI tombol
 export async function checkNotificationSubscriptionStatus() {
   const notificationToggleBtn = document.getElementById(
     "notification-toggle-btn"
@@ -25,35 +25,43 @@ export async function checkNotificationSubscriptionStatus() {
   const notificationBtnText = document.getElementById("notification-btn-text");
   if (!notificationToggleBtn || !notificationBtnText) return;
 
+  // Pastikan browser mendukung Service Worker dan PushManager
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-    notificationToggleBtn.style.display = "none";
+    notificationToggleBtn.style.display = "none"; // Sembunyikan tombol jika tidak didukung
     return;
   }
 
-  const registration = await navigator.serviceWorker.ready;
-  const subscription = await registration.pushManager.getSubscription();
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
 
-  if (subscription) {
-    notificationToggleBtn.classList.add("subscribed");
-    notificationBtnText.textContent = "Nonaktifkan Notifikasi";
-    notificationToggleBtn.querySelector("i").className = "fas fa-bell-slash";
-    console.debug("[DEBUG:notification] User sudah berlangganan notifikasi");
-  } else {
-    notificationToggleBtn.classList.remove("subscribed");
-    notificationBtnText.textContent = "Aktifkan Notifikasi";
-    notificationToggleBtn.querySelector("i").className = "fas fa-bell";
-    console.debug("[DEBUG:notification] User belum berlangganan notifikasi");
+    if (subscription) {
+      notificationToggleBtn.classList.add("subscribed");
+      notificationBtnText.textContent = "Nonaktifkan Notifikasi";
+      notificationToggleBtn.querySelector("i").className = "fas fa-bell-slash";
+      console.debug("[DEBUG:notification] User sudah berlangganan notifikasi");
+    } else {
+      notificationToggleBtn.classList.remove("subscribed");
+      notificationBtnText.textContent = "Aktifkan Notifikasi";
+      notificationToggleBtn.querySelector("i").className = "fas fa-bell";
+      console.debug("[DEBUG:notification] User belum berlangganan notifikasi");
+    }
+  } catch (error) {
+    console.error(
+      "[DEBUG:notification] Error checking subscription status:",
+      error
+    );
+    notificationToggleBtn.style.display = "none"; // Sembunyikan jika ada error
   }
-  notificationToggleBtn.style.display = "block";
+  notificationToggleBtn.style.display = "block"; // Tampilkan tombol setelah status diperbarui
 }
 
-// [DEBUG:notification] Toggle langganan notifikasi push
+// [DEBUG:notification] Toggle langganan notifikasi push (aktifkan/nonaktifkan)
 export async function toggleNotificationSubscription() {
   const notificationToggleBtn = document.getElementById(
     "notification-toggle-btn"
   );
-  const notificationBtnText = document.getElementById("notification-btn-text");
-  if (!notificationToggleBtn || !notificationBtnText) return;
+  if (!notificationToggleBtn) return;
 
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
     alert("Browser Anda tidak mendukung Push Notification.");
@@ -66,26 +74,29 @@ export async function toggleNotificationSubscription() {
     return;
   }
 
-  notificationToggleBtn.disabled = true;
+  notificationToggleBtn.disabled = true; // Nonaktifkan tombol sementara proses berjalan
 
   try {
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.getSubscription();
 
     if (subscription) {
+      // Jika sudah berlangganan, batalkan langganan
       await subscription.unsubscribe();
       console.debug(
         "[DEBUG:notification] User unsubscribed from push service."
       );
+      // Kirim informasi berhenti langganan ke backend
       await unsubscribeNotification(token, subscription.endpoint);
       alert("Notifikasi berhasil dinonaktifkan.");
     } else {
+      // Jika belum berlangganan, minta izin dan berlangganan
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
         const applicationServerKey = urlB64ToUint8Array(
           CONFIG.VAPID_PUBLIC_KEY
         );
-        const options = { applicationServerKey, userVisibleOnly: true };
+        const options = { applicationServerKey, userVisibleOnly: true }; // userVisibleOnly harus true
         const newSubscription = await registration.pushManager.subscribe(
           options
         );
@@ -93,6 +104,7 @@ export async function toggleNotificationSubscription() {
           "[DEBUG:notification] User subscribed to push service:",
           newSubscription
         );
+        // Kirim detail langganan ke backend
         await subscribeNotification(token, newSubscription.toJSON());
         alert("Notifikasi berhasil diaktifkan.");
       } else {
@@ -111,8 +123,8 @@ export async function toggleNotificationSubscription() {
     );
     alert(`Gagal mengelola notifikasi: ${error.message}`);
   } finally {
-    notificationToggleBtn.disabled = false;
-    await checkNotificationSubscriptionStatus();
+    notificationToggleBtn.disabled = false; // Aktifkan kembali tombol
+    await checkNotificationSubscriptionStatus(); // Perbarui UI tombol
   }
 }
 
@@ -124,12 +136,18 @@ export async function subscribeUserToPush(registration) {
     );
     return;
   }
-  const token = getAuthToken();
-  if (!token) return;
+  const token = getAuthToken(); // Dapatkan token autentikasi pengguna
+  if (!token) {
+    console.debug(
+      "[DEBUG:notification] No auth token found, skipping auto-subscribe."
+    );
+    return; // Lewati jika tidak ada token (user belum login)
+  }
 
   try {
     const subscription = await registration.pushManager.getSubscription();
     if (!subscription) {
+      // Hanya subscribe jika belum ada langganan aktif
       const applicationServerKey = urlB64ToUint8Array(CONFIG.VAPID_PUBLIC_KEY);
       const options = { applicationServerKey, userVisibleOnly: true };
       const newSubscription = await registration.pushManager.subscribe(options);
@@ -138,12 +156,17 @@ export async function subscribeUserToPush(registration) {
         newSubscription
       );
       await subscribeNotification(token, newSubscription.toJSON());
+    } else {
+      console.debug(
+        "[DEBUG:notification] User already subscribed, skipping auto-subscribe."
+      );
     }
   } catch (error) {
+    // Tangani error jika auto-subscribe gagal (misal: izin ditolak sebelumnya)
     console.error(
       "[DEBUG:notification] Failed to subscribe automatically:",
       error
     );
   }
-  await checkNotificationSubscriptionStatus();
+  await checkNotificationSubscriptionStatus(); // Selalu perbarui UI setelah upaya subscribe
 }
