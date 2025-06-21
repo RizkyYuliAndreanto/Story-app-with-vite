@@ -10,9 +10,9 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
-      <script type="module" crossorigin src="/Story-app-with-vite/assets/index-1a375614.js"></script>
-      <link rel="stylesheet" href="/Story-app-with-vite/assets/index-cc678f22.css">
-    </head>
+      <script type="module" crossorigin src="/Story-app-with-vite/assets/index-DomHFbRd.js"></script>
+      <link rel="stylesheet" crossorigin href="/Story-app-with-vite/assets/index-BWVKniEB.css">
+    <link rel="manifest" href="/Story-app-with-vite/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/Story-app-with-vite/registerSW.js"></script></head>
   <body>
     <header class="main-header-wrapper">
       <div class="main-header container">
@@ -88,8 +88,7 @@
     <main id="main-content" class="main-content container"></main>
 
     <script src="https://unpkg.com/feather-icons"></script>
-    
-    
+    
     
     <script>
       // Script untuk inisialisasi Feather Icons dan penandaan navigasi aktif
@@ -107,25 +106,8 @@
             );
           });
       });
-
-      // --- TAMBAHAN KRUSIAL UNTUK REGISTRASI SERVICE WORKER SEBAGAI MODUL ---
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          // Pastikan `scope` sesuai dengan base path aplikasi Anda
-          // dan `type: 'module'` ditambahkan
-          navigator.serviceWorker.register('/Story-app-with-vite/sw.js', { 
-            scope: '/Story-app-with-vite/', 
-            type: 'module' // <--- Tambahkan ini
-          })
-          .then(registration => {
-            console.log('Service Worker terdaftar dengan scope:', registration.scope, 'dan type: module');
-          })
-          .catch(error => {
-            console.error('Pendaftaran Service Worker gagal:', error);
-          });
-        });
-      }
-      // --- AKHIR TAMBAHAN ---
+      // Pendaftaran Service Worker akan diinjeksikan secara otomatis oleh vite-plugin-pwa
+      // Jangan tambahkan kode pendaftaran SW manual di sini.
     </script>
   </body>
 </html>
