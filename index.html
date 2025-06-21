@@ -4,16 +4,15 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Story App</title>
-    <link rel="manifest" href="./manifest.webmanifest" />
     <meta name="theme-color" content="#304ffe" />
     
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
-      <script type="module" crossorigin src="/Story-app-with-vite/assets/index-3D6_9Krt.js"></script>
-      <link rel="stylesheet" crossorigin href="/Story-app-with-vite/assets/index-BWVKniEB.css">
-    <link rel="manifest" href="/Story-app-with-vite/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/Story-app-with-vite/registerSW.js"></script></head>
+      <script type="module" crossorigin src="/assets/index-DoXNPvNB.js"></script>
+      <link rel="stylesheet" crossorigin href="/assets/index-BWVKniEB.css">
+    <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
   <body>
     <header class="main-header-wrapper">
       <div class="main-header container">
@@ -92,11 +91,10 @@
     
     
     <script>
-   
+      // Script untuk inisialisasi Feather Icons dan penandaan navigasi aktif
       document.addEventListener("DOMContentLoaded", function () {
         feather.replace();
 
-      
         const currentPath =
           window.location.hash.split("?")[0].split("/")[0] || "#/";
         document
