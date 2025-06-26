@@ -48,7 +48,7 @@ export default defineConfig({
         "images/maskable-icon-x192.png",
         "images/maskable-icon-x384.png",
         "images/maskable-icon-x512.png",
-        "screenshot/*.png",
+        "screenshot/*.jpg",
         "manifest.webmanifest",
       ],
       manifest: {

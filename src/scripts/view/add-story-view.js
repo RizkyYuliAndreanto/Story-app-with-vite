@@ -25,7 +25,7 @@ class AddStoryView {
   coordinatesDisplay = null;
   submitBtn = null;
   cameraPermissionError = null;
-  testNotificationBtn = null; 
+ 
 
   mapInstance = null;
   mapMarker = null; 
@@ -105,9 +105,7 @@ class AddStoryView {
 
           <button type="submit" class="submit-btn">Kirim Cerita</button>
           
-          <button type="button" id="test-notification-btn" class="submit-btn" style="background-color: #007bff; margin-top: 10px;">
-            <i data-feather="bell"></i> Test Notifikasi Lokal
-          </button>
+         
         </form>
       </section>
     `;
@@ -138,7 +136,7 @@ class AddStoryView {
     this.cameraPermissionError = document.getElementById(
       "camera-permission-error"
     );
-    this.testNotificationBtn = document.getElementById("test-notification-btn"); 
+   
 
     if (window.feather) feather.replace(); 
   }
@@ -512,16 +510,6 @@ class AddStoryView {
     this.form.addEventListener("submit", handler);
   }
 
-  /**
-   * Mengikat event click pada tombol "Test Notifikasi Lokal".
-   * @param {Function} handler Handler event.
-   */
-  bindTestNotificationButtonClick(handler) {
-    if (this.testNotificationBtn) {
-      this.testNotificationBtn.addEventListener("click", handler);
-    }
-  }
-  // --- Akhir metode baru ---
 
   /**
    * Mengembalikan nilai deskripsi dari input.
